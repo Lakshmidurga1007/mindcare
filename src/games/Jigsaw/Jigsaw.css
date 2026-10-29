@@ -1,0 +1,331 @@
+.jigsaw-game {
+  min-height: 100vh;
+  padding: 30px;
+  box-sizing: border-box;
+
+  background: linear-gradient(
+    135deg,
+    #f6fbf9,
+    #e8f4f0
+  );
+
+  font-family: Arial, sans-serif;
+}
+
+.jigsaw-header {
+  max-width: 1000px;
+  margin: 0 auto 30px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.jigsaw-header h1 {
+  margin: 0;
+
+  font-size: 36px;
+
+  color: #285c55;
+}
+
+.jigsaw-header p {
+  margin-top: 8px;
+
+  font-size: 19px;
+
+  color: #55736e;
+}
+
+.jigsaw-moves {
+  background: white;
+
+  padding: 14px 24px;
+
+  border-radius: 16px;
+
+  text-align: center;
+
+  box-shadow:
+    0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+.jigsaw-moves span {
+  display: block;
+
+  font-size: 14px;
+
+  color: #777;
+}
+
+.jigsaw-moves strong {
+  display: block;
+
+  margin-top: 5px;
+
+  font-size: 28px;
+
+  color: #285c55;
+}
+
+/* Main layout */
+
+.jigsaw-content {
+  max-width: 1000px;
+
+  margin: 0 auto;
+
+  display: flex;
+
+  gap: 40px;
+
+  align-items: center;
+}
+
+/* Puzzle */
+
+.puzzle-container {
+  background: white;
+
+  padding: 20px;
+
+  border-radius: 20px;
+
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.puzzle-board {
+  width: 510px;
+  height: 510px;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, 1fr);
+
+  grid-template-rows:
+    repeat(3, 1fr);
+
+  gap: 4px;
+
+  background: #285c55;
+}
+
+.puzzle-piece {
+  border: none;
+
+  background: #78aa9f;
+
+  cursor: pointer;
+
+  font-size: 28px;
+
+  font-weight: bold;
+
+  color: white;
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.puzzle-piece:hover {
+  transform: scale(0.96);
+}
+
+.puzzle-piece.selected {
+  background: #e5a94d;
+
+  transform: scale(0.94);
+
+  box-shadow:
+    inset 0 0 0 5px white;
+}
+
+.puzzle-piece.correct {
+  background: #8dbfb3;
+}
+
+/* Instructions */
+
+.jigsaw-instructions {
+  width: 280px;
+
+  background: white;
+
+  padding: 25px;
+
+  border-radius: 20px;
+
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+.jigsaw-instructions h2 {
+  margin-top: 0;
+
+  color: #285c55;
+
+  font-size: 24px;
+}
+
+.instruction {
+  display: flex;
+
+  align-items: center;
+
+  gap: 14px;
+
+  margin: 20px 0;
+}
+
+.instruction span {
+  min-width: 34px;
+  height: 34px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #6fa99d;
+
+  color: white;
+
+  font-weight: bold;
+}
+
+.instruction p {
+  margin: 0;
+
+  color: #555;
+
+  line-height: 1.4;
+}
+
+.jigsaw-restart,
+.jigsaw-play-again {
+  width: 100%;
+
+  padding: 14px;
+
+  border: none;
+
+  border-radius: 12px;
+
+  background: #4f8f84;
+
+  color: white;
+
+  font-size: 17px;
+
+  font-weight: bold;
+
+  cursor: pointer;
+}
+
+.jigsaw-restart:hover,
+.jigsaw-play-again:hover {
+  background: #3e796f;
+}
+
+/* Completion */
+
+.jigsaw-complete {
+  position: fixed;
+
+  inset: 0;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  background: rgba(40, 92, 85, 0.35);
+
+  z-index: 100;
+}
+
+.complete-card {
+  width: 400px;
+
+  padding: 35px;
+
+  border-radius: 25px;
+
+  background: white;
+
+  text-align: center;
+
+  box-shadow:
+    0 15px 40px rgba(0, 0, 0, 0.2);
+}
+
+.complete-icon {
+  font-size: 60px;
+}
+
+.complete-card h2 {
+  color: #285c55;
+
+  font-size: 30px;
+}
+
+.complete-card p {
+  color: #666;
+
+  font-size: 18px;
+
+  line-height: 1.5;
+
+  margin-bottom: 25px;
+}
+
+/* Tablet */
+
+@media (max-width: 850px) {
+  .jigsaw-content {
+    flex-direction: column;
+  }
+
+  .jigsaw-instructions {
+    width: auto;
+    max-width: 510px;
+  }
+}
+
+/* Mobile */
+
+@media (max-width: 600px) {
+  .jigsaw-game {
+    padding: 20px;
+  }
+
+  .jigsaw-header {
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 15px;
+  }
+
+  .jigsaw-header h1 {
+    font-size: 28px;
+  }
+
+  .puzzle-container {
+    padding: 10px;
+  }
+
+  .puzzle-board {
+    width: 90vw;
+    height: 90vw;
+    max-width: 450px;
+    max-height: 450px;
+  }
+}

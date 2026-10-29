@@ -1,0 +1,595 @@
+.word-search-game {
+  min-height: 100vh;
+  padding: 30px;
+  box-sizing: border-box;
+
+  background: linear-gradient(
+    135deg,
+    #f4faf7,
+    #e5f3ee
+  );
+
+  font-family: Arial, sans-serif;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.word-search-header {
+  max-width: 1050px;
+  margin: 0 auto 20px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.level-label {
+  display: inline-block;
+
+  padding: 6px 14px;
+  margin-bottom: 8px;
+
+  border-radius: 20px;
+
+  background: #4f8f84;
+  color: white;
+
+  font-size: 14px;
+  font-weight: bold;
+
+  letter-spacing: 1px;
+}
+
+.word-search-header h1 {
+  margin: 0;
+
+  font-size: 36px;
+
+  color: #285c55;
+}
+
+.word-search-header p {
+  margin: 8px 0 0;
+
+  font-size: 19px;
+
+  color: #55736e;
+}
+
+/* =========================
+   WORD COUNTER
+========================= */
+
+.word-progress {
+  min-width: 100px;
+
+  padding: 14px 22px;
+
+  border-radius: 16px;
+
+  background: white;
+
+  text-align: center;
+
+  box-shadow:
+    0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+.word-progress span {
+  display: block;
+
+  color: #777;
+
+  font-size: 14px;
+}
+
+.word-progress strong {
+  display: block;
+
+  margin-top: 5px;
+
+  color: #285c55;
+
+  font-size: 28px;
+}
+
+/* =========================
+   LEVEL PROGRESS
+========================= */
+
+.level-progress {
+  max-width: 600px;
+
+  margin: 0 auto 30px;
+
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+
+  gap: 12px;
+}
+
+.level-dot {
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+
+  border-radius: 50%;
+
+  background: #d7e8e3;
+
+  color: #6d8580;
+
+  font-size: 16px;
+  font-weight: bold;
+
+  transition: 0.2s ease;
+}
+
+.level-dot.active {
+  background: #4f8f84;
+
+  color: white;
+
+  transform: scale(1.15);
+
+  box-shadow:
+    0 4px 10px rgba(79, 143, 132, 0.3);
+}
+
+.level-dot.completed {
+  background: #78aa9f;
+
+  color: white;
+}
+
+/* =========================
+   GAME AREA
+========================= */
+
+.word-search-content {
+  max-width: 1050px;
+
+  margin: 0 auto;
+
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+
+  gap: 45px;
+}
+
+/* =========================
+   LETTER BOARD
+========================= */
+
+.letter-board {
+  width: min(560px, 90vw);
+  aspect-ratio: 1;
+
+  padding: 12px;
+
+  box-sizing: border-box;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(var(--grid-size), 1fr);
+
+  grid-template-rows:
+    repeat(var(--grid-size), 1fr);
+
+  gap: 7px;
+
+  background: white;
+
+  border-radius: 24px;
+
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.letter-cell {
+  min-width: 0;
+
+  min-height: 44px;
+
+  border: none;
+
+  border-radius: 10px;
+
+  background: #edf7f4;
+
+  color: #285c55;
+
+  font-size: clamp(18px, 3vw, 28px);
+
+  font-weight: bold;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.15s ease,
+    background 0.15s ease,
+    color 0.15s ease;
+
+  -webkit-tap-highlight-color: transparent;
+}
+
+.letter-cell:hover {
+  background: #d8eee8;
+
+  transform: scale(0.95);
+}
+
+.letter-cell:active {
+  transform: scale(0.88);
+}
+
+.letter-cell.selected {
+  background: #e5a94d;
+
+  color: white;
+
+  transform: scale(0.94);
+
+  box-shadow:
+    0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* =========================
+   WORD LIST
+========================= */
+
+.word-list {
+  width: 260px;
+
+  padding: 25px;
+
+  box-sizing: border-box;
+
+  background: white;
+
+  border-radius: 22px;
+
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+.word-list h2 {
+  margin: 0;
+
+  color: #285c55;
+
+  font-size: 25px;
+}
+
+.word-help {
+  margin: 8px 0 20px;
+
+  color: #777;
+
+  font-size: 15px;
+
+  line-height: 1.4;
+}
+
+.words {
+  margin-bottom: 20px;
+}
+
+.word-item {
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  padding: 12px;
+
+  margin-bottom: 10px;
+
+  border-radius: 10px;
+
+  background: #f1f7f5;
+
+  color: #405f5a;
+
+  font-size: 18px;
+
+  font-weight: bold;
+
+  transition: 0.2s ease;
+}
+
+.word-icon {
+  width: 27px;
+  height: 27px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+
+  border-radius: 50%;
+
+  background: #d5e9e3;
+
+  color: #55736e;
+}
+
+.word-item.word-found {
+  background: #dff2e9;
+
+  color: #347a68;
+
+  text-decoration: line-through;
+}
+
+.word-item.word-found .word-icon {
+  background: #4f8f84;
+
+  color: white;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+
+.clear-button,
+.new-game-button {
+  width: 100%;
+
+  min-height: 48px;
+
+  padding: 12px;
+
+  margin-top: 9px;
+
+  border: none;
+
+  border-radius: 12px;
+
+  font-size: 16px;
+
+  font-weight: bold;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.clear-button {
+  background: #edf2f1;
+
+  color: #55736e;
+}
+
+.clear-button:hover {
+  background: #dfe9e6;
+}
+
+.new-game-button {
+  background: #4f8f84;
+
+  color: white;
+}
+
+.new-game-button:hover {
+  background: #3e796f;
+
+  transform: translateY(-1px);
+}
+
+/* =========================
+   LEVEL COMPLETE
+========================= */
+
+.word-complete {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 100;
+
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+
+  padding: 20px;
+
+  box-sizing: border-box;
+
+  background: rgba(40, 92, 85, 0.35);
+}
+
+.word-complete-card {
+  width: 400px;
+
+  max-width: 90%;
+
+  padding: 35px;
+
+  box-sizing: border-box;
+
+  background: white;
+
+  border-radius: 25px;
+
+  text-align: center;
+
+  box-shadow:
+    0 15px 40px rgba(0, 0, 0, 0.2);
+
+  animation: levelPopup 0.25s ease;
+}
+
+@keyframes levelPopup {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.trophy {
+  font-size: 65px;
+}
+
+.complete-level {
+  display: inline-block;
+
+  margin-top: 10px;
+
+  padding: 6px 12px;
+
+  border-radius: 15px;
+
+  background: #e3f1ed;
+
+  color: #347a68;
+
+  font-size: 13px;
+
+  font-weight: bold;
+}
+
+.word-complete-card h2 {
+  margin: 12px 0;
+
+  color: #285c55;
+
+  font-size: 32px;
+}
+
+.word-complete-card p {
+  color: #666;
+
+  font-size: 18px;
+
+  line-height: 1.5;
+
+  margin-bottom: 25px;
+}
+
+.play-again-button {
+  width: 100%;
+
+  min-height: 50px;
+
+  padding: 14px;
+
+  border: none;
+
+  border-radius: 12px;
+
+  background: #4f8f84;
+
+  color: white;
+
+  font-size: 18px;
+
+  font-weight: bold;
+
+  cursor: pointer;
+}
+
+.play-again-button:hover {
+  background: #3e796f;
+}
+
+/* =========================
+   TABLET
+========================= */
+
+@media (max-width: 900px) {
+  .word-search-content {
+    flex-direction: column;
+
+    gap: 25px;
+  }
+
+  .word-list {
+    width: min(560px, 90vw);
+  }
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 600px) {
+  .word-search-game {
+    padding: 18px;
+  }
+
+  .word-search-header {
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 15px;
+  }
+
+  .word-search-header h1 {
+    font-size: 28px;
+  }
+
+  .word-search-header p {
+    font-size: 16px;
+  }
+
+  .word-progress {
+    align-self: stretch;
+  }
+
+  .level-progress {
+    margin-bottom: 20px;
+
+    gap: 8px;
+  }
+
+  .level-dot {
+    width: 38px;
+    height: 38px;
+  }
+
+  .letter-board {
+    width: 95vw;
+
+    padding: 7px;
+
+    gap: 4px;
+
+    border-radius: 18px;
+  }
+
+  .letter-cell {
+    min-height: 40px;
+
+    border-radius: 6px;
+
+    font-size: 17px;
+  }
+
+  .word-list {
+    width: 95vw;
+
+    padding: 20px;
+  }
+}

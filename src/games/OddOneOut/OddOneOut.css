@@ -1,0 +1,312 @@
+.odd-game {
+  min-height: 100vh;
+  padding: 30px 20px;
+  background: linear-gradient(135deg, #eef8ef, #fffaf0);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.odd-card {
+  width: 100%;
+  max-width: 900px;
+  background: #ffffff;
+  border-radius: 28px;
+  padding: 32px;
+  box-shadow: 0 10px 35px rgba(70, 110, 75, 0.12);
+  box-sizing: border-box;
+}
+
+/* Header */
+
+.odd-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.odd-header h1 {
+  margin: 0;
+  color: #315c3b;
+  font-size: 32px;
+}
+
+.odd-header p {
+  margin: 8px 0 0;
+  color: #68756c;
+  font-size: 17px;
+}
+
+.round-info {
+  min-width: 85px;
+  padding: 12px 16px;
+  background: #edf7ed;
+  border-radius: 18px;
+  text-align: center;
+  color: #315c3b;
+}
+
+.round-info strong {
+  font-size: 28px;
+}
+
+.round-info span {
+  font-size: 16px;
+  margin-left: 3px;
+}
+
+/* Progress */
+
+.progress-container {
+  height: 10px;
+  margin: 25px 0 18px;
+  background: #e5eee6;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background: #76a87f;
+  border-radius: 20px;
+  transition: width 0.3s ease;
+}
+
+/* Score */
+
+.score-row {
+  display: flex;
+  justify-content: space-between;
+  color: #536458;
+  font-size: 16px;
+  margin-bottom: 25px;
+}
+
+.score-row strong {
+  color: #315c3b;
+}
+
+.instruction {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 600;
+  color: #315c3b;
+  margin-bottom: 25px;
+}
+
+/* Options */
+
+.options-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 22px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.odd-option {
+  min-height: 190px;
+  border: 4px solid #e5eee6;
+  border-radius: 25px;
+  background: #fffdf8;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.odd-option:hover:not(:disabled) {
+  transform: scale(1.03);
+  border-color: #9ac59f;
+  background: #f4faf4;
+}
+
+.odd-option:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.odd-option:disabled {
+  cursor: default;
+}
+
+.symbol {
+  font-size: 75px;
+  line-height: 1;
+}
+
+/* Answer states */
+
+.correct-option {
+  border-color: #70ad78 !important;
+  background: #edf9ef !important;
+}
+
+.wrong-option {
+  border-color: #e4a1a1 !important;
+  background: #fff1f1 !important;
+}
+
+/* Feedback */
+
+.feedback {
+  margin: 25px auto 0;
+  max-width: 600px;
+  padding: 16px 20px;
+  border-radius: 16px;
+  text-align: center;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.correct-feedback {
+  background: #edf9ef;
+  color: #397044;
+}
+
+.wrong-feedback {
+  background: #fff3f3;
+  color: #9b4a4a;
+}
+
+/* Buttons */
+
+.game-controls {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 28px;
+}
+
+.game-controls button,
+.restart-button {
+  border: none;
+  border-radius: 14px;
+  padding: 14px 26px;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.game-controls button:hover,
+.restart-button:hover {
+  transform: translateY(-2px);
+}
+
+.stop-button {
+  background: #f1eeee;
+  color: #655c5c;
+}
+
+.next-button,
+.restart-button {
+  background: #5f9468;
+  color: white;
+}
+
+/* Result */
+
+.result-card {
+  max-width: 650px;
+  text-align: center;
+}
+
+.result-icon {
+  font-size: 70px;
+  margin-bottom: 10px;
+}
+
+.result-card h1 {
+  margin: 0;
+  color: #315c3b;
+  font-size: 34px;
+}
+
+.result-message {
+  color: #68756c;
+  font-size: 18px;
+  margin: 12px 0 30px;
+}
+
+.result-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.result-stats div {
+  background: #f4f9f4;
+  padding: 20px 10px;
+  border-radius: 18px;
+}
+
+.result-stats strong {
+  display: block;
+  color: #315c3b;
+  font-size: 28px;
+  margin-bottom: 5px;
+}
+
+.result-stats span {
+  color: #68756c;
+  font-size: 14px;
+}
+
+/* Mobile / Tablet */
+
+@media (max-width: 650px) {
+  .odd-game {
+    padding: 15px;
+  }
+
+  .odd-card {
+    padding: 22px 16px;
+    border-radius: 22px;
+  }
+
+  .odd-header {
+    align-items: flex-start;
+  }
+
+  .odd-header h1 {
+    font-size: 25px;
+  }
+
+  .odd-header p {
+    font-size: 15px;
+  }
+
+  .round-info {
+    min-width: 65px;
+    padding: 9px;
+  }
+
+  .round-info strong {
+    font-size: 22px;
+  }
+
+  .instruction {
+    font-size: 20px;
+  }
+
+  .options-grid {
+    gap: 12px;
+  }
+
+  .odd-option {
+    min-height: 145px;
+    border-radius: 20px;
+  }
+
+  .symbol {
+    font-size: 58px;
+  }
+
+  .result-stats {
+    grid-template-columns: 1fr;
+  }
+}
