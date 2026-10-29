@@ -16,12 +16,14 @@ const ITEMS: PictureItem[] = [
   {emoji:"🐈",name:"Cat",category:"animal"},{emoji:"🐕",name:"Dog",category:"animal"},{emoji:"🐦",name:"Bird",category:"animal"},{emoji:"🐟",name:"Fish",category:"animal"},{emoji:"🐄",name:"Cow",category:"animal"},{emoji:"🐇",name:"Rabbit",category:"animal"},
   {emoji:"🥄",name:"Spoon",category:"kitchen"},{emoji:"🍽️",name:"Plate",category:"kitchen"},{emoji:"🫖",name:"Teapot",category:"kitchen"},{emoji:"🍞",name:"Bread",category:"food"},{emoji:"🧀",name:"Cheese",category:"food"},{emoji:"🍪",name:"Biscuit",category:"food"},
 ];
+
 const pick = <T,>(items:T[], index:number) => items[((index % items.length) + items.length) % items.length];
 const shuffle = <T,>(items:T[], seed:number):T[] => [...items].map((item,i)=>({item,sort:Math.sin((seed+1)*(i+3)*12.9898)*43758.5453%1})).sort((a,b)=>a.sort-b.sort).map(x=>x.item);
 const itemLabel = (item:PictureItem) => `${item.emoji} ${item.name}`;
 
 function makeQuestion(title:string, level:number):Question {
   const seed = level - 1;
+
   if (title === "Working Memory Challenge") {
     const length = 3 + Math.min(2, Math.floor(seed / 20));
     const start = (seed * 3) % ITEMS.length;
@@ -32,8 +34,10 @@ function makeQuestion(title:string, level:number):Question {
     const options = shuffle([target,...distractors],seed+13).map(itemLabel);
     const answer = itemLabel(target);
     const prompt = mode===0 ? "Which picture appeared FIRST?" : mode===1 ? "Which picture appeared LAST?" : "Which picture was part of the sequence?";
+
     return {stimulus:sequence.map(itemLabel).join("   "),prompt,options,answer,explanation:`${target.name} was ${mode===0?"shown first":mode===1?"shown last":"included in the sequence"}.`,visual:true};
   }
+
   if (title === "Rule Switching") {
     const categories = ["fruit","animal","garden","transport","clothing","kitchen","home","food"];
     const category = pick(categories, Math.floor(seed/2));
@@ -42,8 +46,10 @@ function makeQuestion(title:string, level:number):Question {
     const wrongItems = shuffle(ITEMS.filter(x=>x.category!==category),seed+4).slice(0,2);
     const options = shuffle([correct,...wrongItems],seed+8).map(itemLabel);
     const labels:Record<string,string> = {fruit:"FRUIT",animal:"ANIMAL",garden:"GARDEN ITEM",transport:"TRANSPORT",clothing:"CLOTHING",kitchen:"KITCHEN ITEM",home:"EVERYDAY HOME ITEM",food:"FOOD"};
+
     return {prompt:`New rule: choose the picture that is a ${labels[category]}.`,options,answer:itemLabel(correct),explanation:`${correct.name} matches the ${labels[category].toLowerCase()} rule.`,visual:true};
   }
+
   // Scene Investigator: a picture-based scene with a question about what was seen.
   const sceneLength = 4 + Math.min(2,Math.floor(seed/25));
   const scene = shuffle(ITEMS,seed+33).slice(0,sceneLength);
@@ -51,6 +57,7 @@ function makeQuestion(title:string, level:number):Question {
   const target = isMissing ? pick(ITEMS.filter(x=>!scene.some(s=>s.name===x.name)),seed+5) : pick(scene,seed+7);
   const distractors = isMissing ? shuffle(scene.filter(x=>x.name!==target.name),seed+17).slice(0,2) : shuffle(ITEMS.filter(x=>!scene.some(s=>s.name===x.name)),seed+17).slice(0,2);
   const options = shuffle([target,...distractors],seed+22).map(itemLabel);
+
   return {stimulus:scene.map(itemLabel).join("   "),prompt:isMissing?"Which picture was NOT in the scene?":"Which picture WAS in the scene?",options,answer:itemLabel(target),explanation:isMissing?`${target.name} was not in the scene.`:`${target.name} was included in the scene.`,visual:true};
 }
 
@@ -74,8 +81,10 @@ export default function CognitiveGame({ title, onBack, onComplete }: Props) {
   const [stimulusHidden,setStimulusHidden] = useState(false);
   const [startedAt,setStartedAt] = useState(()=>new Date().toISOString());
   const question = useMemo(()=>makeQuestion(title,level),[title,level]);
+
   const nextLevel = () => { const next=Math.min(120,level+1); unlock(next); setLevel(next); setSelected(null); setStimulusHidden(false); setStartedAt(new Date().toISOString()); };
   const selectLevel = (value:number) => { if(value<=unlocked){setLevel(value);setSelected(null);setStimulusHidden(false);setStartedAt(new Date().toISOString());} };
+
   const answer = (option:string) => {
     if(selected) return;
     setSelected(option);
@@ -83,10 +92,13 @@ export default function CognitiveGame({ title, onBack, onComplete }: Props) {
     onComplete?.({score:correct?100:0,correct:correct?1:0,wrong:correct?0:1,attempts:1,roundsPlayed:1,accuracy:correct?100:0,startedAt,completedAt:new Date().toISOString()});
     if(correct) unlock(level+1);
   };
-  const options = question.options.map((option,i)=>{
+
+  // Corrected: removed the unused index variable.
+  const options = question.options.map((option)=>{
     const correct = option===question.answer;
     return <button key={`${level}-${option}`} className={`cognitive-option ${question.visual?"picture-option":""} ${selected===option?(correct?"is-correct":"is-wrong"):""}`} onClick={()=>answer(option)} disabled={!!selected} aria-label={option}>{question.visual?<><span className="picture-option-emoji">{option.split(" ")[0]}</span><span>{option.substring(option.indexOf(" ")+1)}</span></>:option}</button>;
   });
+
   return <SessionFrame title={title} onBack={onBack}><section className="cognitive-panel">
     <div className="level-header"><div><span className="level-kicker">LEVEL</span><strong>{level} <small>of 120</small></strong></div><div className="level-picker"><label htmlFor="cognitive-level">Choose level</label><select id="cognitive-level" value={level} onChange={e=>selectLevel(Number(e.target.value))}>{Array.from({length:unlocked},(_,i)=><option key={i+1} value={i+1}>Level {i+1}</option>)}</select></div></div>
     <div className="cognitive-progress-track"><span style={{width:`${(level/120)*100}%`}}/></div>
@@ -130,11 +142,28 @@ const conversationCases = [
   {situation:"You want to say something nice about a meal.",options:["This meal is delicious. Thank you.","The bus is sleeping in the garden.","I can wear some soup."],answer:"This meal is delicious. Thank you."},
   {situation:"You are ready to go for a walk.",options:["Would you like to go for a walk with me?","The lamp is a river.","I can fold a cup."],answer:"Would you like to go for a walk with me?"},
 ];
+
 export function VerbalFluencyGame({ onBack, onComplete }: Props) {
-  const [level,setLevel] = useState(1); const [selected,setSelected] = useState<string|null>(null); const [startedAt,setStartedAt] = useState(()=>new Date().toISOString()); const {unlocked,unlock}=useProgress("Everyday Conversation");
+  const [level,setLevel] = useState(1);
+  const [selected,setSelected] = useState<string|null>(null);
+  const [startedAt,setStartedAt] = useState(()=>new Date().toISOString());
+  const {unlocked,unlock}=useProgress("Everyday Conversation");
   const question=pick(conversationCases,(level-1));
-  const choose=(option:string)=>{if(selected)return;setSelected(option);const ok=option===question.answer;onComplete?.({score:ok?100:0,correct:ok?1:0,wrong:ok?0:1,attempts:1,roundsPlayed:1,accuracy:ok?100:0,startedAt,completedAt:new Date().toISOString()});if(ok)unlock(level+1);};
-  const next=()=>{setLevel(v=>v===conversationCases.length?1:v+1);setSelected(null);setStartedAt(new Date().toISOString());};
+
+  const choose=(option:string)=>{
+    if(selected)return;
+    setSelected(option);
+    const ok=option===question.answer;
+    onComplete?.({score:ok?100:0,correct:ok?1:0,wrong:ok?0:1,attempts:1,roundsPlayed:1,accuracy:ok?100:0,startedAt,completedAt:new Date().toISOString()});
+    if(ok)unlock(level+1);
+  };
+
+  const next=()=>{
+    setLevel(v=>v===conversationCases.length?1:v+1);
+    setSelected(null);
+    setStartedAt(new Date().toISOString());
+  };
+
   return <SessionFrame title="Everyday Conversation" onBack={onBack}><section className="cognitive-panel"><div className="level-header"><div><span className="level-kicker">LEVEL</span><strong>{level} <small>of {conversationCases.length}</small></strong></div><div className="level-picker"><label htmlFor="conversation-level">Choose level</label><select id="conversation-level" value={level} onChange={e=>{const v=Number(e.target.value);if(v<=unlocked){setLevel(v);setSelected(null);setStartedAt(new Date().toISOString());}}}>{Array.from({length:unlocked},(_,i)=><option key={i+1} value={i+1}>Level {i+1}</option>)}</select></div></div><div className="conversation-scene"><span className="conversation-icon">💬</span><p>What would you say?</p><h2>{question.situation}</h2></div><div className="cognitive-options">{question.options.map((option,i)=><button key={option} className={`cognitive-option ${selected===option?(option===question.answer?"is-correct":"is-wrong"):""}`} disabled={!!selected} onClick={()=>choose(option)}><span className="conversation-option-number">{["A","B","C"][i]}</span>{option}</button>)}</div>{selected&&<div className="cognitive-feedback"><CheckCircle2 size={20}/><span>{selected===question.answer?"That is a kind, clear response.":`Good try. A helpful response could be: “${question.answer}”`}</span></div>}<div className="cognitive-actions"><button className="cognitive-secondary" onClick={onBack}>Exit activity</button>{selected&&<button className="cognitive-primary" onClick={next}>Next situation <ChevronRight size={18}/></button>}</div></section><p className="cognitive-note"><Lightbulb size={16}/> A familiar everyday conversation activity. There is no time limit and no penalty for mistakes.</p></SessionFrame>;
 }
 
@@ -181,13 +210,16 @@ export function TowerOfHanoi({ onBack, onComplete }: Props) {
       setChosen(null);
       return;
     }
+
     const source = [...pegs[chosen]];
     const destination = [...pegs[peg]];
     const disk = source[source.length - 1];
+
     if (destination.length && destination[destination.length - 1] < disk) {
       setChosen(null);
       return;
     }
+
     source.pop();
     destination.push(disk);
     const next = pegs.map((stack) => [...stack]);
@@ -203,6 +235,7 @@ export function TowerOfHanoi({ onBack, onComplete }: Props) {
       const moveCount = moves + 1;
       const minimumMoves = 2 ** disks - 1;
       const efficiency = Math.max(0, Math.min(100, Math.round((minimumMoves / moveCount) * 100)));
+
       onComplete?.({
         score: efficiency,
         correct: 1,
@@ -239,10 +272,66 @@ export function TowerOfHanoi({ onBack, onComplete }: Props) {
 }
 
 export function SlidingNumberPuzzle({onBack,onComplete}:Props){
-  const {unlocked,unlock}=useProgress("Spatial Reasoning"); const [level,setLevel]=useState(1); const [tiles,setTiles]=useState<number[]>(()=>makePuzzle(1)); const [moves,setMoves]=useState(0); const [startedAt,setStartedAt]=useState(()=>new Date().toISOString()); const [finished,setFinished]=useState(false);
-  function makePuzzle(l:number){const arr=[1,2,3,4,5,6,7,8,0];let prev=-1;for(let i=0;i<60+Math.min(160,l*2);i++){const empty=arr.indexOf(0);const neighbors=[empty-3,empty+3,...(empty%3>0?[empty-1]:[]),...(empty%3<2?[empty+1]:[])].filter(n=>n>=0&&n<9&&Math.abs(n-empty)!==2);const valid=neighbors.filter(n=>n!==prev);const next=pick(valid.length?valid:neighbors,l*31+i*7);[arr[empty],arr[next]]=[arr[next],arr[empty]];prev=empty;}return arr;}
+  const {unlocked,unlock}=useProgress("Spatial Reasoning");
+  const [level,setLevel]=useState(1);
+  const [tiles,setTiles]=useState<number[]>(()=>makePuzzle(1));
+  const [moves,setMoves]=useState(0);
+  const [startedAt,setStartedAt]=useState(()=>new Date().toISOString());
+  const [finished,setFinished]=useState(false);
+
+  function makePuzzle(l:number){
+    const arr=[1,2,3,4,5,6,7,8,0];
+    let prev=-1;
+    for(let i=0;i<60+Math.min(160,l*2);i++){
+      const empty=arr.indexOf(0);
+      const neighbors=[empty-3,empty+3,...(empty%3>0?[empty-1]:[]),...(empty%3<2?[empty+1]:[])].filter(n=>n>=0&&n<9&&Math.abs(n-empty)!==2);
+      const valid=neighbors.filter(n=>n!==prev);
+      const next=pick(valid.length?valid:neighbors,l*31+i*7);
+      [arr[empty],arr[next]]=[arr[next],arr[empty]];
+      prev=empty;
+    }
+    return arr;
+  }
+
   const solved=tiles.every((v,i)=>v===(i===8?0:i+1));
-  const move=(index:number)=>{if(finished||tiles[index]===0)return;const empty=tiles.indexOf(0);if(Math.abs(index-empty)!==3&&!(Math.floor(index/3)===Math.floor(empty/3)&&Math.abs(index-empty)===1))return;const next=[...tiles];[next[index],next[empty]]=[next[empty],next[index]];setTiles(next);setMoves(v=>v+1);if(next.every((v,i)=>v===(i===8?0:i+1))){setFinished(true);unlock(level+1);onComplete?.({score:Math.max(0,100-Math.max(0,moves+1-30)),correct:1,wrong:0,attempts:moves+1,roundsPlayed:1,accuracy:100,startedAt,completedAt:new Date().toISOString()});}};
-  const startLevel=(l:number)=>{setLevel(l);setTiles(makePuzzle(l));setMoves(0);setFinished(false);setStartedAt(new Date().toISOString());};
-  return <SessionFrame title="Spatial Reasoning" onBack={onBack}><section className="cognitive-panel"><div className="level-header"><div><span className="level-kicker">LEVEL</span><strong>{level} <small>of 120</small></strong></div><div className="level-picker"><label htmlFor="spatial-level">Choose level</label><select id="spatial-level" value={level} onChange={e=>{const l=Number(e.target.value);if(l<=unlocked)startLevel(l);}}>{Array.from({length:unlocked},(_,i)=><option key={i+1} value={i+1}>Level {i+1}</option>)}</select></div></div><p>Slide one tile at a time into the empty square. Arrange the numbers from 1 to 8.</p><div className="number-slide-board" aria-label="Sliding number puzzle">{tiles.map((tile,i)=><button key={`${level}-${i}-${tile}`} className={`number-slide-tile ${tile===0?"empty-tile":""}`} onClick={()=>move(i)} disabled={finished||tile===0} aria-label={tile===0?"Empty square":`Move tile ${tile}`}>{tile||""}</button>)}</div><div className="spatial-status"><span>Moves: <strong>{moves}</strong></span><span>{solved?"Solved!":"Goal: 1 → 8"}</span></div>{finished&&<div className="cognitive-feedback"><CheckCircle2 size={20}/>Wonderful! All numbers are in order.</div>}<div className="cognitive-actions"><button className="cognitive-secondary" onClick={onBack}>Exit activity</button><button className="cognitive-secondary" onClick={()=>startLevel(level)}><RotateCcw size={17}/> Restart</button>{finished&&level<120&&<button className="cognitive-primary" onClick={()=>startLevel(level+1)}>Next level <ChevronRight size={18}/></button>}</div></section><p className="cognitive-note"><Lightbulb size={16}/> The puzzle uses a solvable random arrangement at each level. You can take as much time as you need.</p></SessionFrame>;
+
+  const move=(index:number)=>{
+    if(finished||tiles[index]===0)return;
+    const empty=tiles.indexOf(0);
+    if(Math.abs(index-empty)!==3&&!(Math.floor(index/3)===Math.floor(empty/3)&&Math.abs(index-empty)===1))return;
+
+    const next=[...tiles];
+    [next[index],next[empty]]=[next[empty],next[index]];
+    setTiles(next);
+    setMoves(v=>v+1);
+
+    if(next.every((v,i)=>v===(i===8?0:i+1))){
+      setFinished(true);
+      unlock(level+1);
+      onComplete?.({score:Math.max(0,100-Math.max(0,moves+1-30)),correct:1,wrong:0,attempts:moves+1,roundsPlayed:1,accuracy:100,startedAt,completedAt:new Date().toISOString()});
+    }
+  };
+
+  const startLevel=(l:number)=>{
+    setLevel(l);
+    setTiles(makePuzzle(l));
+    setMoves(0);
+    setFinished(false);
+    setStartedAt(new Date().toISOString());
+  };
+
+  return <SessionFrame title="Spatial Reasoning" onBack={onBack}>
+    <section className="cognitive-panel">
+      <div className="level-header">
+        <div><span className="level-kicker">LEVEL</span><strong>{level} <small>of 120</small></strong></div>
+        <div className="level-picker"><label htmlFor="spatial-level">Choose level</label><select id="spatial-level" value={level} onChange={e=>{const l=Number(e.target.value);if(l<=unlocked)startLevel(l);}}>{Array.from({length:unlocked},(_,i)=><option key={i+1} value={i+1}>Level {i+1}</option>)}</select></div>
+      </div>
+      <p>Slide one tile at a time into the empty square. Arrange the numbers from 1 to 8.</p>
+      <div className="number-slide-board" aria-label="Sliding number puzzle">{tiles.map((tile,i)=><button key={`${level}-${i}-${tile}`} className={`number-slide-tile ${tile===0?"empty-tile":""}`} onClick={()=>move(i)} disabled={finished||tile===0} aria-label={tile===0?"Empty square":`Move tile ${tile}`}>{tile||""}</button>)}</div>
+      <div className="spatial-status"><span>Moves: <strong>{moves}</strong></span><span>{solved?"Solved!":"Goal: 1 → 8"}</span></div>
+      {finished&&<div className="cognitive-feedback"><CheckCircle2 size={20}/>Wonderful! All numbers are in order.</div>}
+      <div className="cognitive-actions"><button className="cognitive-secondary" onClick={onBack}>Exit activity</button><button className="cognitive-secondary" onClick={()=>startLevel(level)}><RotateCcw size={17}/> Restart</button>{finished&&level<120&&<button className="cognitive-primary" onClick={()=>startLevel(level+1)}>Next level <ChevronRight size={18}/></button>}</div>
+    </section>
+    <p className="cognitive-note"><Lightbulb size={16}/> The puzzle uses a solvable random arrangement at each level. You can take as much time as you need.</p>
+  </SessionFrame>;
 }
