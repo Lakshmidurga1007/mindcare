@@ -19,5 +19,6 @@ React + TypeScript + Vite application.
 - **Scene Investigator** — 120 generated picture-scene recall cases.
 - **Family Recognition** — preserved without changes.
 - **Voice & Music** — 120 distinct familiar-word prompts, speech playback/recognition, and a gentle tone that varies between levels.
+- This is last commit
 
 Progress and completed game sessions are saved locally in the browser. The Caretaker Portal Performance Analysis includes a daily performance graph for the last 7 days, a monthly performance graph for the last 6 months, a filter to view one game or all games, average performance per game, session counts, and recent completed sessions. Days/months without completed sessions show no accuracy point (rather than misleading 0% accuracy). Tower of Hanoi records move-efficiency as its performance score and stores the level/challenge with the session. Activities are intended for engagement and practice, not diagnosis or treatment; caregivers should adapt difficulty and support to the person's preferences and abilities.
