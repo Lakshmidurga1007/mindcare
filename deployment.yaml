@@ -1,0 +1,21 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mindcare-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mindcare
+  template:
+    metadata:
+      labels:
+        app: mindcare
+    spec:
+      containers:
+        - name: mindcare-container
+          image: mindcare-app:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 80
